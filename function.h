@@ -1,9 +1,13 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
-#include <float.h>
+#define e 0.00001
 
-#define SS_INF_ROOTS DBL_MAX
+enum ValueOfNumber
+{
+    IsZero,
+    IsNotZero
+};
 
 enum RootsNumber
 {
@@ -14,5 +18,8 @@ enum RootsNumber
 };
 
 enum RootsNumber SolveSquare (double a, double b, double c, double* x1, double* x2);
+void PrintRoots( enum RootsNumber nRoots, double x1, double x2 );
+enum ValueOfNumber IsEqual( double num );
+
 
 #endif // #define FUNCTION_H_
