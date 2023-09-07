@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 
 
 
@@ -46,10 +47,14 @@ enum RootsNumber SolveSquare(double a, double b, double c, double* x1, double* x
     if( IsEqual(d) == IsZero )
     {
 
-        *x1 = *x2 = -b / (2*a);
+        *x1 = -b / (2*a);
         return ONE_ROOT;
 
     }
+    
+    if( d < 0 )
+        return NO_ROOTS;
+
     double sqrt_d = sqrt(d);
 
     *x1 = (-b - sqrt_d) / (2*a);
@@ -69,7 +74,7 @@ void PrintRoots( enum RootsNumber nRoots, double x1, double x2 )
             break;
 
         case ONE_ROOT: 
-            printf("x = %lg\n", x1);
+            printf("x1 = %lg\n", x1, x2);
             break;
         
         case TWO_ROOTS: 
@@ -77,7 +82,7 @@ void PrintRoots( enum RootsNumber nRoots, double x1, double x2 )
             break;
 
         case INF_ROOTS: 
-            printf("Any number");
+            printf("Any number\n");
             break;
 
         default: printf("main(): ERROR: nRoots = %d\n", nRoots);
@@ -90,4 +95,78 @@ void PrintRoots( enum RootsNumber nRoots, double x1, double x2 )
 enum ValueOfNumber IsEqual( double num )
 {
     return fabs(num) < e ? IsZero : IsNotZero;
+}
+
+int ReadingFile( char* argv[], double* a, double* b, double* c, double* x1test, double* x2test, enum RootsNumber* nRootsTest )
+{
+
+    assert (a != NULL);
+    assert (b != NULL);
+    assert (c != NULL);
+    assert (x1test != NULL);
+    assert (x2test != NULL);
+    assert (nRootsTest != NULL);
+    assert (x1test != x2test);
+    assert (a != b);
+    assert (a != c);
+    assert (a != x1test);
+    assert (a != x2test);
+    assert (b != c);
+    assert (b != x1test);
+    assert (b != x2test);
+    assert (c != x1test);
+    assert (c != x2test);
+    assert (x1test != x2test);
+
+    FILE *test;
+    char name[strlen(argv[1]) + 1];
+    strcpy( name, argv[1] );
+
+    if ((test = fopen(name, "r")) == NULL)
+    {
+        printf( "The file could not be opened\n" );
+        return 0;
+    }
+
+
+    char RootsNum[10];
+    if( fscanf( test, "%lg %lg %lg %lg %lg %s", a, b, c, x1test, x2test, RootsNum ) != 6 )
+        return 0;
+
+    if( !strcmp ( RootsNum, "NO_ROOTS" ) )
+        nRootsTest = NO_ROOTS;
+    else if( !strcmp ( RootsNum, "ONE_ROOT" ) )
+        nRootsTest = ONE_ROOT;
+    else if( !strcmp ( RootsNum, "TWO_ROOTS" ) )
+        nRootsTest = TWO_ROOTS;
+    else if( !strcmp ( RootsNum, "INF_ROOTS" ) )
+        nRootsTest = INF_ROOTS;
+    else
+    {
+        printf("Incorrectly entered data\n");
+        return 0;
+    }
+
+    printf("+%x+\n",&nRootsTest);
+
+    return 1;
+
+
+}
+
+void PrintRootsTest( enum RootsNumber nRoots, enum RootsNumber nRootsTest, double x1, double x2, double x1test, double x2test )
+{
+
+    if( nRoots == nRootsTest  &&  x1 == x1test  &&  x2 == x2test )
+        printf("Test is succesful:)\n");
+
+    else
+    {
+        printf("Test is not succesful:(\nWhat was expected: ");
+        PrintRoots( nRootsTest, x1test, x2test );
+        printf("Result of program: ");
+        PrintRoots( nRoots, x1, x2 );
+
+    }
+
 }

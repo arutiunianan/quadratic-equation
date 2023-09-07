@@ -1,32 +1,54 @@
-#include "function.c"
+#include "function.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 
-int main()
-{
-    printf (" Enter a, b, c: ");
-    double a = 0, b = 0, c = 0;
-    scanf ("%lg %lg %lg", &a, &b, &c);
+int main(int argc, char* argv[])
+{    
+    double a = 0;
+    double b = 0;
+    double c = 0;
+    char words[100];
 
-    double x1 = 0, x2 = 0;
-    enum RootsNumber nRoots = SolveSquare (a, b, c, &x1, &x2);
+    double x1 = 0;
+    double x2 = 0;
 
-    switch (nRoots)
+    //scanf ("%lg %lg %lg", &a, &b, &c);
+
+    // поправить сканф на выявление ошибок
+    if ( argc == 1 ) 
+    {
+        printf (" Enter a, b, c: ");
+
+        while (scanf("%lg %lg %lg", &a, &b, &c) != 3)
+        {
+            scanf("%s\n", words);
+            printf("Enter only numbers: ");
+        }
+
+        enum RootsNumber nRoots = SolveSquare (a, b, c, &x1, &x2);
+
+        PrintRoots( nRoots, x1, x2 );
+    }
+
+    else if( argc == 2 )
     {
 
-        case NO_ROOTS:  printf("No roots\n");
-                break;
+        double x1test = 0;
+        double x2test = 0;
+        enum RootsNumber nRootsTest;
+        printf("+%x+\n",&nRootsTest);
+        if( ReadingFile( argv, &a, &b, &c, &x1test, &x2test,  &nRootsTest ) == 0)
+        {
+            return 0;
+        }
 
-        case ONE_ROOT: printf("x = %lg\n", x1);
-                break;
+        enum RootsNumber nRoots = SolveSquare (a, b, c, &x1, &x2 );
 
-        case TWO_ROOTS: printf("x1 = %lg, x2 = %lg\n", x1, x2);
-                break;
-
-        case INF_ROOTS: printf("Any number");
-            break;
-
-        default: printf("main(): ERROR: nRoots = %d\n", nRoots);
-            return 1;
-        
+        PrintRootsTest( nRoots, nRootsTest, x1, x2, x1test, x2test );
     }
+
+    else
+        printf( "Invalid number of args to program." );
+
 }
